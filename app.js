@@ -30,7 +30,7 @@ app.use(cookieParser(process.env.JWT_SECRET));
 
 //routes
 app.get("/", async (req, res) => {
-  res.send("hi mom");
+  res.send("hi form server");
 });
 
 //lower order middleware
@@ -49,4 +49,6 @@ const start = async () => {
     console.log(error);
   }
 };
-start();
+// start();
+
+module.exports = { app, start };
