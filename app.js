@@ -17,6 +17,7 @@ const notFound = require("./middleware/notFound");
 const errorHandler = require("./middleware/errorHandler");
 
 //router imports
+const blogRouter = require("./routers/blogRouter");
 
 //middleware
 app.use(morgan("tiny"));
@@ -32,6 +33,8 @@ app.use(cookieParser(process.env.JWT_SECRET));
 app.get("/", async (req, res) => {
   res.send("hi form server");
 });
+
+app.use("/api/v1/blogs", blogRouter);
 
 //lower order middleware
 app.use(notFound);

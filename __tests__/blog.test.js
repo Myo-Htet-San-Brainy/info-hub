@@ -8,25 +8,25 @@ describe("Blogs api", () => {
 
   it("GET /blogs => 200", () => {
     return request(app)
-      .get("/blogs")
+      .get("/api/v1/blogs")
       .expect("Content-Type", /json/)
       .expect(200);
   });
 
   it("GET /blogs/:id => 200", () => {
     return request(app)
-      .get("/blogs/1")
+      .get("/api/v1/blogs/1")
       .expect("Content-Type", /json/)
       .expect(200);
   });
 
   it("GET /blogs/nonExistingID => 404", () => {
-    return request(app).get("/blogs/123").expect(404);
+    return request(app).get("/api/v1/blogs/123").expect(404);
   });
 
   it("POST /blogs => 201", () => {
     return request(app)
-      .post("/blogs")
+      .post("/api/v1/blogs")
       .send({
         title: "some title",
         text: "some text",
@@ -36,7 +36,7 @@ describe("Blogs api", () => {
 
   it("POST /blogs => validates req body,400", () => {
     return request(app)
-      .post("/blogs")
+      .post("/api/v1/blogs")
       .send({
         title: 123,
         text: 123,
@@ -46,7 +46,7 @@ describe("Blogs api", () => {
 
   it("PUT /blogs/:id => 200", () => {
     return request(app)
-      .put("/blogs/123")
+      .put("/api/v1/blogs/123")
       .send({
         title: "new title",
         text: "new text",
@@ -56,7 +56,7 @@ describe("Blogs api", () => {
 
   it("PUT /blogs/nonExistingId => 404", () => {
     return request(app)
-      .put("/blogs/nonExist")
+      .put("/api/v1/blogs/nonExist")
       .send({
         title: "new title",
         text: "new text",
@@ -66,7 +66,7 @@ describe("Blogs api", () => {
 
   it("PUT /blogs/wrongFormattedId => 404", () => {
     return request(app)
-      .put("/blogs/wrongFormat")
+      .put("/api/v1/blogs/wrongFormat")
       .send({
         title: "new title",
         text: "new text",
@@ -76,7 +76,7 @@ describe("Blogs api", () => {
 
   it("GET /blogs/updateTrustVote/:id => 200", () => {
     return request(app)
-      .put("/blogs/updateTrustVote/correctId")
+      .put("/api/v1/blogs/updateTrustVote/correctId")
       .send({
         voteState: "up",
       })
@@ -84,10 +84,10 @@ describe("Blogs api", () => {
   });
 
   it("DELETE /blogs/:id => 200", () => {
-    return request(app).delete("/blogs/correctId").expect(200);
+    return request(app).delete("/api/v1/blogs/correctId").expect(200);
   });
 
   it("DELETE /blogs/nonExistingID => 404", () => {
-    return request(app).delete("/blogs/nonExistId").expect(404);
+    return request(app).delete("/api/v1/blogs/nonExistId").expect(404);
   });
 });
