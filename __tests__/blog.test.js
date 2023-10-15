@@ -1,10 +1,24 @@
 const request = require("supertest");
 var { app, start } = require("../app");
+var Blog = require("../models/blogModel");
 
 describe("Blogs api", () => {
+  let createdBlogId;
   beforeAll(() => {
     return start();
   }, 5000);
+
+  beforeAll(async () => {
+    const blog = await Blog.create({
+      title: "Some title",
+      text: "some text",
+    });
+    createdBlogId = blog._id;
+  });
+
+  afterAll(async () => {
+    await Blog.deleteMany();
+  });
 
   it("GET /blogs => 200", () => {
     return request(app)
@@ -15,7 +29,7 @@ describe("Blogs api", () => {
 
   it("GET /blogs/:id => 200", () => {
     return request(app)
-      .get("/api/v1/blogs/1")
+      .get(`/api/v1/blogs/${createdBlogId}`)
       .expect("Content-Type", /json/)
       .expect(200);
   });
@@ -44,9 +58,9 @@ describe("Blogs api", () => {
       .expect(400);
   });
 
-  it("PUT /blogs/:id => 200", () => {
+  it("PUT /blogs/correctId => 200", () => {
     return request(app)
-      .put("/api/v1/blogs/123")
+      .put(`/api/v1/blogs/${createdBlogId}`)
       .send({
         title: "new title",
         text: "new text",
@@ -56,7 +70,7 @@ describe("Blogs api", () => {
 
   it("PUT /blogs/nonExistingId => 404", () => {
     return request(app)
-      .put("/api/v1/blogs/nonExist")
+      .put("/api/v1/blogs/652bfcde2353571f78a52334")
       .send({
         title: "new title",
         text: "new text",
@@ -66,7 +80,7 @@ describe("Blogs api", () => {
 
   it("PUT /blogs/wrongFormattedId => 404", () => {
     return request(app)
-      .put("/api/v1/blogs/wrongFormat")
+      .put("/api/v1/blogs/123")
       .send({
         title: "new title",
         text: "new text",
@@ -74,20 +88,22 @@ describe("Blogs api", () => {
       .expect(404);
   });
 
-  it("GET /blogs/updateTrustVote/:id => 200", () => {
+  it("PUT /blogs/updateTrustVote/correctId => 200", () => {
     return request(app)
-      .put("/api/v1/blogs/updateTrustVote/correctId")
+      .put(`/api/v1/blogs/updateTrustVote/${createdBlogId}`)
       .send({
         voteState: "up",
       })
       .expect(200);
   });
 
-  it("DELETE /blogs/:id => 200", () => {
-    return request(app).delete("/api/v1/blogs/correctId").expect(200);
+  it("DELETE /blogs/correctId => 200", () => {
+    return request(app).delete(`/api/v1/blogs/${createdBlogId}`).expect(200);
   });
 
   it("DELETE /blogs/nonExistingID => 404", () => {
-    return request(app).delete("/api/v1/blogs/nonExistId").expect(404);
+    return request(app)
+      .delete("/api/v1/blogs/652bgdd12353571f78a58980")
+      .expect(404);
   });
 });

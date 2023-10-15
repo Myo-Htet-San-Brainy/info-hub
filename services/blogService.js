@@ -21,6 +21,11 @@ async function getBlog(blogId) {
 
 async function createBlog(data) {
   const { title, text } = data;
+  if (typeof title != "string" || typeof text != "string") {
+    throw new customError.BadRequest(
+      "Please only give text for both title and content fields"
+    );
+  }
   const blog = await Blog.create({ title, text });
   return blog;
 }
