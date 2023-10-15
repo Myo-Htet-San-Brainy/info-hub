@@ -1,32 +1,37 @@
 //packages
 
 //imports
-const Metric = require("../models/metricsModel");
+const Blog = require("../models/blogModel");
 const customError = require("../errors");
 
-async function getMetrics() {
-  const metrics = await Metric.find({});
-  const formattedMetrics = metrics.reduce((acc, metric) => {
-    acc[metric.name] = metric.number;
-    return acc;
-  }, {});
-  return formattedMetrics;
+async function getBlogs() {
+  const blogs = await Blog.find({});
+  return blogs;
 }
 
-async function getNonFormattedMetrics() {
-  const metrics = await Metric.find({});
-  return metrics;
+async function getBlog(blogId) {
+  const blog = await Blog.find({
+    _id: blogId,
+  });
+  if (!blog) {
+    throw new customError.NotFound(`No blog found with id: ${blogId}`);
+  }
+  return blog;
 }
 
-async function createMetric(data) {
-  const metric = await Metric.create(data);
-  return metric;
+async function createBlog(data) {
+  const { title, text } = data;
+  const blog = await Blog.create({ title, text });
+  return blog;
 }
 
-async function updateMetric(metricId, data) {
-  const metric = await Metric.findOneAndUpdate(
+async function updateBlog(blogId, data) {
+  if (data.noOfTrustVote) {
+    delete data[noOfTrustVote];
+  }
+  const blog = await Blog.findOneAndUpdate(
     {
-      _id: metricId,
+      _id: blogId,
     },
     data,
     {
@@ -34,23 +39,41 @@ async function updateMetric(metricId, data) {
       new: true,
     }
   );
-  return metric;
+  if (!blog) {
+    throw new customError.NotFound(`No blog found with id: ${blogId}`);
+  }
+  return blog;
 }
 
-async function deleteMetric(metricId) {
-  const metric = await Metric.findOneAndDelete({
-    _id: metricId,
-  });
-  if (!metric) {
-    throw new customError.NotFound(`No metric found with name: ${metricId}`);
+async function updateTrustVote(blogId, data) {
+  const blog = await Blog.findById(blogId);
+  if (!blog) {
+    throw new customError.NotFound(`No blog found with id: ${blogId}`);
   }
-  return metric;
+  if (data.voteState.toString() === "up") {
+    blog.noOfTrustVote += 1;
+  } else {
+    blog.noOfTrustVote -= 1;
+  }
+  await blog.save();
+  return blog;
+}
+
+async function deleteBlog(blogId) {
+  const blog = await Blog.findOneAndDelete({
+    _id: blogId,
+  });
+  if (!blog) {
+    throw new customError.NotFound(`No blog found with id: ${blogId}`);
+  }
+  return blog;
 }
 
 module.exports = {
-  getMetrics,
-  getNonFormattedMetrics,
-  createMetric,
-  updateMetric,
-  deleteMetric,
+  getBlogs,
+  getBlog,
+  createBlog,
+  updateBlog,
+  updateTrustVote,
+  deleteBlog,
 };

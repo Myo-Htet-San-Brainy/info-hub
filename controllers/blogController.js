@@ -2,7 +2,7 @@
 const { StatusCodes } = require("http-status-codes");
 
 //imports
-// const blogService = require("../services/blogService");
+const blogService = require("../services/blogService");
 
 const getBlogs = async (req, res) => {
   res.status(StatusCodes.OK).json({ data: [] });
